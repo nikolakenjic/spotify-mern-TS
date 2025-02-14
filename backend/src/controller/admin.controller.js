@@ -1,6 +1,6 @@
-import { json } from 'express';
 import { Album } from '../models/album.model';
 import { Song } from '../models/song.model';
+import { uploadToImageKit } from '../utils/uploadToImageKit';
 
 export const createSong = async (req, res, next) => {
   try {
@@ -11,6 +11,10 @@ export const createSong = async (req, res, next) => {
     const { title, artist, albumId, duration } = req.body;
     const audioFile = req.files.audioFile;
     const imageFile = req.files.imageFile;
+
+    // Upload files to ImageKit
+    const audioUrl = uploadToImageKit(audioFile);
+    const imageUrl = uploadToImageKit(imageFile);
 
     const song = new Song({
       title,
