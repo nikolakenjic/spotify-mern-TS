@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import { clerkMiddleware } from '@clerk/express';
 import ImageKit from 'imagekit';
+import fileUpload from 'express-fileupload';
+import path from 'path';
 
 import { connectDB } from './lib/db.js';
 
@@ -15,6 +17,7 @@ import statsRoutes from './routes/stats.route.js';
 
 dotenv.config();
 
+const __dirname = path.resolve();
 const app = express();
 
 // Morgan for development
@@ -31,12 +34,22 @@ const imageKit = new ImageKit({
 app.use(express.json()); // to parse req.body
 
 app.use(clerkMiddleware()); // add auth to req object => req.auth.userId
-
 // ImageKIT
 app.use((req, res, next) => {
   req.imageKit = imageKit;
   next();
 });
+// FileUpload
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: path.join(__dirname, 'temp'),
+    createParentPath: true,
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB  max file size
+    },
+  })
+);
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
