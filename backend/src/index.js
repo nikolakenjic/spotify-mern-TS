@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import { clerkMiddleware } from '@clerk/express';
 
 import { connectDB } from './lib/db.js';
 
@@ -15,6 +16,8 @@ dotenv.config();
 const app = express();
 
 app.use(express.json()); // to parse req.body
+
+app.use(clerkMiddleware()); // add auth to req.object
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
