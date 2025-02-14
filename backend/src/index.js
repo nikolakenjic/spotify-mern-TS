@@ -14,6 +14,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(express.json()); // to parse req.body
+
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
