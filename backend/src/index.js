@@ -77,3 +77,5 @@ app.listen(PORT, () => {
   console.log(`Server is running on a port: ${PORT}`);
   connectDB();
 });
+
+// todo: socket.io
