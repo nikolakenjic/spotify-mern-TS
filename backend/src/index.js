@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 import { clerkMiddleware } from '@clerk/express';
+import ImageKit from 'imagekit';
 
 import { connectDB } from './lib/db.js';
 
@@ -15,9 +17,26 @@ dotenv.config();
 
 const app = express();
 
+// Morgan for development
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+const imageKit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
+
 app.use(express.json()); // to parse req.body
 
-app.use(clerkMiddleware()); // add auth to req.object
+app.use(clerkMiddleware()); // add auth to req object => req.auth.userId
+
+// ImageKIT
+app.use((req, res, next) => {
+  req.imageKit = imageKit;
+  next();
+});
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
