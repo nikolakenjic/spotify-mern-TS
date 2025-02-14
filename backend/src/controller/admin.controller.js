@@ -2,7 +2,7 @@ import { json } from 'express';
 import { Album } from '../models/album.model';
 import { Song } from '../models/song.model';
 
-export const createSong = async (req, res) => {
+export const createSong = async (req, res, next) => {
   try {
     if (!req.files || !req.files.audioFile || !req.files.imageFile) {
       return res.status(400).json({ message: 'Please upload all files' });
@@ -33,6 +33,6 @@ export const createSong = async (req, res) => {
     res.status(200).json(song);
   } catch (error) {
     console.log('Error in createSong', error);
-    res.status(500), json({ message: 'Internal server error', error });
+    next(error);
   }
 };

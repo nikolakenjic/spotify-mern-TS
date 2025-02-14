@@ -58,6 +58,19 @@ app.use('/api/songs', songsRoutes);
 app.use('/api/albums', albumRoutes);
 app.use('/api/stats', statsRoutes);
 
+// Error handler
+app.use((err, req, res, next) => {
+  {
+    res.status(500),
+      json({
+        message:
+          process.env.NODE_ENV === 'production'
+            ? 'Internal Server error'
+            : err.message,
+      });
+  }
+});
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
