@@ -5,6 +5,7 @@ import { clerkMiddleware } from '@clerk/express';
 import ImageKit from 'imagekit';
 import fileUpload from 'express-fileupload';
 import path from 'path';
+import cors from 'cors';
 
 import { connectDB } from './lib/db.js';
 
@@ -31,6 +32,12 @@ const imageKit = new ImageKit({
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
+app.use(
+  cors({
+    origin: 'http://localhost:3001',
+    credentials: true,
+  })
+);
 app.use(express.json()); // to parse req.body
 
 app.use(clerkMiddleware()); // add auth to req object => req.auth.userId
