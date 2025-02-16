@@ -26,7 +26,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
     try {
       const response = await axiosInstance.get('/albums');
 
-      set({ currentAlbum: response.data });
+      set({ albums: response.data });
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       set({ error: err.response?.data?.message || 'Something went wrong' });
@@ -40,7 +40,7 @@ export const useMusicStore = create<MusicStore>((set) => ({
     try {
       const response = await axiosInstance.get(`/albums/${id}`);
 
-      set({ albums: response.data });
+      set({ currentAlbum: response.data });
     } catch (error) {
       const err = error as { response?: { data?: { message?: string } } };
       set({ error: err.response?.data?.message || 'Something went wrong' });
