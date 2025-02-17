@@ -41,7 +41,7 @@ const FriendsActivity = () => {
                     <AvatarFallback>{user.fullName[0]}</AvatarFallback>
                   </Avatar>
                   <div
-                    className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-zinc-900 `}
+                    className={`absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-zinc-900 `}
                     aria-hidden="true"
                   />
                 </div>
