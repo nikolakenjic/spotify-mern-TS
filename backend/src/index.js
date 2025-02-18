@@ -58,12 +58,12 @@ app.use(
   })
 );
 
-app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/songs', songsRoutes);
-app.use('/api/albums', albumRoutes);
-app.use('/api/stats', statsRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/songs', songsRoutes);
+app.use('/api/v1/albums', albumRoutes);
+app.use('/api/v1/stats', statsRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
