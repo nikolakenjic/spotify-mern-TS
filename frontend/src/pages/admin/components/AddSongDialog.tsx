@@ -16,10 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { axiosInstance } from '@/lib/axios';
 import { useMusicStore } from '@/stores/useMusicStore';
 import { NewSong } from '@/types';
 import { Plus, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 const AddSongDialog = () => {
   const { albums } = useMusicStore();
@@ -44,7 +46,53 @@ const AddSongDialog = () => {
   const audioInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    setLoading(true);
+
+    try {
+      if (!files.audio || !files.image) {
+        return toast.error('Please upload audio and image');
+      }
+
+      const formData = new FormData();
+
+      formData.append('title', newSong.title);
+      formData.append('artist', newSong.artist);
+      formData.append('duration', newSong.duration);
+
+      if (newSong.album && newSong.album !== 'none') {
+        formData.append('albumId', newSong.album);
+      }
+      formData.append('audioFile', files.audio);
+      formData.append('imageFile', files.image);
+
+      await axiosInstance.post('/admin/songs', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      setNewSong({
+        title: '',
+        artist: '',
+        album: '',
+        duration: '0',
+      });
+
+      setFiles({
+        audio: null,
+        image: null,
+      });
+
+      toast.success('Song added successfully');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Failed to add song: ${error.message}`);
+      } else {
+        toast.error('Failed to add song: Unknown error');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog open={songDialogOpen} onOpenChange={setSongDialogOpen}>
