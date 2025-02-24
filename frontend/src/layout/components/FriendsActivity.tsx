@@ -10,8 +10,6 @@ const FriendsActivity = () => {
   const { user } = useUser();
   const isPlaying = true;
 
-  console.log(users);
-
   useEffect(() => {
     if (user) fetchUsers();
   }, [fetchUsers, user]);
