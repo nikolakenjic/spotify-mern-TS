@@ -12,11 +12,14 @@ interface ChatStore {
   onlineUsers: Set<string>;
   userActivities: Map<string, string>;
   messages: Message[];
+  selectedUser: User | null;
 
   fetchUsers: () => Promise<void>;
   initSocket: (userId: string) => void;
   disconnectSocket: () => void;
   sendMessage: (receiverId: string, senderId: string, content: string) => void;
+  fetchMessages: (userId: string) => Promise<void>;
+  setSelectedUser: (user: User | null) => void;
 }
 
 const baseUrl = 'http://localhost:5000';
@@ -35,6 +38,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   onlineUsers: new Set(),
   userActivities: new Map(),
   messages: [],
+  selectedUser: null,
 
   fetchUsers: async () => {
     set({ isLoading: true, error: null });
@@ -110,5 +114,26 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
-  sendMessage: async () => {},
+  sendMessage: async (receiverId, senderId, content) => {
+    const socket = get().socket;
+
+    if (!socket) return;
+
+    socket.emit('send_message', { receiverId, senderId, content });
+  },
+
+  fetchMessages: async (userId) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await axiosInstance.get(`/users/messages/${userId}`);
+
+      set({ messages: response.data });
+    } catch (error) {
+      const err = error as { response?: { data?: { message?: string } } };
+      set({ error: err.response?.data?.message || 'Something went wrong' });
+    }
+  },
+
+  setSelectedUser: (user) => set({ selectedUser: user }),
 }));
